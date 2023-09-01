@@ -3,10 +3,10 @@ using System.Runtime.Loader;
 
 var assembly = typeof(Program).Assembly;
 
-void Print(Assembly assembly)
+void Print()
 {
     Console.WriteLine("Referenced assemblies:");
-    var assemblies = assembly.GetReferencedAssemblies();
+    var assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
     foreach (var a in assemblies.Select(x => x.Name ?? "").Where(IsLocal))
     {
         Console.WriteLine(a);
@@ -14,7 +14,7 @@ void Print(Assembly assembly)
     Console.WriteLine();
 }
 
-Print(assembly); // Does not print Example.Extra
+Print(); // Does not print Example.Extra
 
 bool IsLocal(string assemblyName) => assemblyName?.Contains("Example") is true;
 
@@ -59,4 +59,15 @@ foreach(var a in localAssemblies)
         Console.WriteLine($"{name}:");
         Console.WriteLine(resource);
     }
+    Console.WriteLine();
 }
+
+Print();
+
+Console.WriteLine("Loaded assemblies:");
+var assemblies = AssemblyLoadContext.Default.Assemblies;
+foreach (var a in assemblies.Select(x => x.GetName().Name ?? "").Where(IsLocal))
+{
+    Console.WriteLine(a);
+}
+Console.WriteLine();
